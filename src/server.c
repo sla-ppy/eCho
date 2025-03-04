@@ -54,53 +54,62 @@ int main(void) {
     }
 
     // 3.
+    bool listening = false;
     int listen_rv = listen(listen_fd,BACKLOG); // 20 - backlog specifies how many connections are allowed on the incomming queue
     if (listen_rv == -1) {
         fprintf(stderr, "listen() error: %s\n", gai_strerror(bind_rv));
         checkErrno();
     } else {
         printf("[SERVER] Listening on: %s:%s\n", node, service);
+        listening = true;
     }
 
     socklen_t addr_size;
     struct sockaddr_storage their_addr;
     addr_size = sizeof their_addr;
 
-    bool receivingData = false;
     // 4.
-    int comms_fd = accept(listen_fd, (struct sockaddr *)&their_addr, &addr_size);
-    if (comms_fd == -1) {
-        fprintf(stderr, "accept() error: %s\n", gai_strerror(bind_rv));
-        checkErrno();
-    } else {
-        printf("[SERVER] Accepted connection.\n");
-        receivingData = true;
-    }
-
     char buffer[512];
     int bytes_received;
     int bytes_sent;
-    while (receivingData) {
-        bytes_received = recv(comms_fd, buffer, sizeof(buffer), 0);
-        if (bytes_received == -1) {
-            fprintf(stderr, "recv() error: %s\n", gai_strerror(bind_rv));
+    int comms_fd;
+    bool transmittingData = false;
+    while (listening) {
+        // 4.
+        comms_fd = accept(listen_fd, (struct sockaddr *)&their_addr, &addr_size);
+        if (comms_fd == -1) {
+            fprintf(stderr, "accept() error: %s\n", gai_strerror(bind_rv));
             checkErrno();
-        } else if (bytes_received == 0) {
-            printf("[SERVER] Remote side has closed the connection\n");
-            receivingData = false;
         } else {
-            printf("[SERVER] %s", buffer);
+            printf("[SERVER] Accepted connection.\n");
+            transmittingData = true;
         }
 
-        bytes_sent = send(comms_fd, buffer, strlen(buffer)+1, 0);
-        if (bytes_sent == -1) {
-          fprintf(stderr, "send() error: %s\n", gai_strerror(bytes_sent));
-          checkErrno();
-        }
+        while(transmittingData) {
+            // 5.
+            bytes_received = recv(comms_fd, buffer, sizeof(buffer), 0);
+            if (bytes_received == -1) {
+                fprintf(stderr, "recv() error: %s\n", gai_strerror(bind_rv));
+                checkErrno();
+            } else if (bytes_received == 0) {
+                printf("[SERVER] Remote side has closed the connection\n");
+                break;
+            } else {
+                printf("[SERVER] %s", buffer);
+            }
 
-        // clear buffer, get ready to recv() next msg
-        for (int i = 0; i != sizeof(buffer); i++) {
-            buffer[i] = '\0';
+            // 5.
+            bytes_sent = send(comms_fd, buffer, strlen(buffer) + 1, 0);
+            if (bytes_sent == -1) {
+                fprintf(stderr, "send() error: %s\n", gai_strerror(bytes_sent));
+                checkErrno();
+            }
+
+            // 6.
+            // clear buffer, get ready to recv() next msg
+            for (int i = 0; i != sizeof(buffer); i++) {
+                buffer[i] = '\0';
+            }
         }
     }
 

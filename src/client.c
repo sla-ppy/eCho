@@ -42,7 +42,7 @@ int main(void) {
         printf("[CLIENT] Connecting socket created.\n");
     }
 
-    bool receivingData = false;
+    bool sendingData = false;
     // 2.
     int connect_rv = connect(client_fd, servinfo->ai_addr, servinfo->ai_addrlen);
     if (connect_rv == -1) {
@@ -50,13 +50,13 @@ int main(void) {
         checkErrno();
     } else {
         printf("[CLIENT] Succesfully connected to %s:%s\n", node, service);
-        receivingData = true;
+        sendingData = true;
     }
 
     char buffer[512];
     int bytes_sent;
     int bytes_received;
-    while (receivingData) {
+    while (sendingData) {
         printf("Enter message: ");
         fgets(buffer, 512, stdin);  // fgets() adds a terminating \0 at the end of the string
 
@@ -72,7 +72,6 @@ int main(void) {
             checkErrno();
         } else if (bytes_received == 0) {
             printf("[SERVER] Remote side has closed the connection\n");
-            receivingData = false;
         } else {
             printf("[SERVER] %s", buffer);
         }

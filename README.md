@@ -1,10 +1,7 @@
 ## Info:
 
 eCho is a TCP server/client implementation which was created by following [Beej's Guide to Network Programming](https://beej.us/guide/bgnet/html/split-wide/)\
-The default address is set to the loopback address, and I advise against using a different address to avoid.
-
-By using the program you accept the risks which come with opening your ports, which can be a security risk.\
-Make sure you close the server once you are done trying it out and do not it for an extended period of time!
+The default address is set to the loopback address, I recommend not changing it, nor using this for anything other than for educational purposes.
 
 ## Server usage:
 
@@ -16,7 +13,9 @@ clang src/server.c -o server -Wall -Wextra -pedantic -std=gnu99`
 ```
 ./server
 ```
-3. The server automatically starts listening on port 10250 and is ready to receive the client's messages
+3. The Server automatically starts listening on port 10250 and is ready to accept the Client joining.
+4. If a Client joins the Server will enter transmission mode until we have a Client present.
+5. If the Client aborts its connection, the Server continues listening, hence close the connection by using CTRL+C
 
 ---
 
@@ -34,4 +33,5 @@ clang src/client.c -o client -Wall -Wextra -pedantic -std=gnu99
 ```
 
 3. The client can now be used to transmit shorter messages
-4. Once finished, you can close Client by using Ctrl+C and the Server will automatically close.
+4. Once finished, you can close Client by using CTRL+C and connection to the Server will end.
+5. You can connect again as the Server continues listening, check that out too!
