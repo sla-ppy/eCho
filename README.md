@@ -10,7 +10,7 @@ Make sure you close the server once you are done trying it out and do not it for
 
 1. Compile using:
 ```
-clang client.c -o client -Wall -Wextra -pedantic -std=gnu99`
+clang src/server.c -o server -Wall -Wextra -pedantic -std=gnu99`
 ```
 2. Run by:
 ```
@@ -21,11 +21,11 @@ clang client.c -o client -Wall -Wextra -pedantic -std=gnu99`
 ---
 
 ## Client usage:
-0. Make sure the server is already listening without any problems, otherwise Client will fail to connect.
+0. Make sure the Server is already listening without any problems, otherwise Client will fail to connect.
 
 1. Compile using:
 ```
-clang client.c -o client -Wall -Wextra -pedantic -std=gnu99
+clang src/client.c -o client -Wall -Wextra -pedantic -std=gnu99
 ```
 
 2: Run by:
@@ -34,4 +34,4 @@ clang client.c -o client -Wall -Wextra -pedantic -std=gnu99
 ```
 
 3. The client can now be used to transmit shorter messages
-4. Once finished, you can close Client by using Ctrl+C and Server will automatically close.
+4. Once finished, you can close Client by using Ctrl+C and the Server will automatically close.
