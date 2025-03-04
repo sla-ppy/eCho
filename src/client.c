@@ -53,16 +53,28 @@ int main(void) {
         receivingData = true;
     }
 
-    char buf[512];
+    char buffer[512];
     int bytes_sent;
+    int bytes_received;
     while (receivingData) {
         printf("Enter message: ");
-        fgets(buf, 512, stdin);
+        fgets(buffer, 512, stdin);  // fgets() adds a terminating \0 at the end of the string
 
-        bytes_sent = send(client_fd, buf, strlen(buf), 0);
+        bytes_sent = send(client_fd, buffer, strlen(buffer)+1, 0); // strlen() by default excludes \0, so we +1
         if (bytes_sent == -1) {
             fprintf(stderr, "send() error: %s\n", gai_strerror(bytes_sent));
             checkErrno();
+        }
+
+        bytes_received = recv(client_fd, buffer, sizeof(buffer), 0);
+        if (bytes_received == -1) {
+            fprintf(stderr, "recv() error: %s\n", gai_strerror(client_fd));
+            checkErrno();
+        } else if (bytes_received == 0) {
+            printf("[SERVER] Remote side has closed the connection\n");
+            receivingData = false;
+        } else {
+            printf("[SERVER] %s", buffer);
         }
     }
 

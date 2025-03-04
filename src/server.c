@@ -1,3 +1,4 @@
+#include <complex.h>
 #include <errno.h>
 #include <stdio.h>
 #include <sys/socket.h>
@@ -8,13 +9,13 @@
 
 #define BACKLOG 20
 
-void checkErrno() {
+void checkErrno(void) {
     if (errno != 0) {  // we can check if errno is a non-zero value, errno always gets updated to the last error value
         fprintf(stderr, "[ERROR]: %s\n", strerror(errno));   // strerror converts errno values to human-readable for us!
     }
 }
 
-int main() {
+int main(void) {
     const char *node = "127.0.0.1";
     const char *service = "10250"; // use above 1024 till 65535, if they aren't already used by some other program
 
@@ -78,6 +79,7 @@ int main() {
 
     char buffer[512];
     int bytes_received;
+    int bytes_sent;
     while (receivingData) {
         bytes_received = recv(comms_fd, buffer, sizeof(buffer), 0);
         if (bytes_received == -1) {
@@ -88,6 +90,17 @@ int main() {
             receivingData = false;
         } else {
             printf("[SERVER] %s", buffer);
+        }
+
+        bytes_sent = send(comms_fd, buffer, strlen(buffer)+1, 0);
+        if (bytes_sent == -1) {
+          fprintf(stderr, "send() error: %s\n", gai_strerror(bytes_sent));
+          checkErrno();
+        }
+
+        // clear buffer, get ready to recv() next msg
+        for (int i = 0; i != sizeof(buffer); i++) {
+            buffer[i] = '\0';
         }
     }
 
