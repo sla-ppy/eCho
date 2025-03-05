@@ -14,7 +14,7 @@
 
 #define BACKLOG 20
 
-void printTimestamp(void) {
+void printTime(void) {
     time_t t = time(NULL); // get local time in calendar format
 
     char time_buffer[70]; // format local time in calendar to custom format
