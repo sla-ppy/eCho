@@ -9,7 +9,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-void printTime() {
+void printTime(void) {
     time_t t = time(NULL); // get local time in calendar format
 
     char time_buffer[70]; // format local time in calendar to custom format

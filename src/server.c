@@ -14,7 +14,7 @@
 
 #define BACKLOG 20
 
-void printTime() {
+void printTimestamp(void) {
     time_t t = time(NULL); // get local time in calendar format
 
     char time_buffer[70]; // format local time in calendar to custom format
@@ -27,8 +27,6 @@ void printTime() {
 }
 
 int main(void) {
-
-
     const char *server_addr = "127.0.0.1";
     const char *server_port = "10250"; // use above 1024 till 65535, if they aren't already used by some other program
 
